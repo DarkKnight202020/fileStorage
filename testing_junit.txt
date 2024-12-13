@@ -1,0 +1,32 @@
+private static ClosableHttpResponse getResponse(){
+	String entity = null;
+	ClosableHttpClient client = HttpClientBuilder.create().build();
+	HttpPost httpPost = new HttpPost(propsLoader.getReconUpdatesAPIURL());
+
+	httpPost.addHeader("Accept","application/json");
+	httpPost.addHeader("Content-Type","application/json");
+	try {
+		entity = getProductListQuery();
+		httpPost.setEntity(entity);
+		CloseableHttpResponse response = client.execute(httpPost);
+
+		return response;
+
+	} catch (IOException e) {
+		throw new RuntimeException(e);
+	}
+
+}
+
+private static StringBuider getStringBuilder(CloseableHttpResponse response) throws IOException {
+	String line;
+	BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+	StringBuilder builder = new StringBuilder();
+
+	while((line = br.readLine()) != null){
+		builder.append(line);
+		builder.append(System.lineSeparator());
+	}
+	return builder;
+}
